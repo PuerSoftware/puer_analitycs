@@ -16,7 +16,7 @@ t_fingerprint = Table(
 	metadata,
 	Column('id',         Integer, primary_key=True, index=True),
 	Column('visitor_id', Integer),
-	Column('user_id',    Integer),
+	Column('user_id',    Integer, nullable=True),
 	Column('user_agent', String),
 	Column('ip',         String, nullable=True),
 	Column('hash',       String),

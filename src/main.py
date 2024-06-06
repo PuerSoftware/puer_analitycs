@@ -1,16 +1,14 @@
 from fastapi                   import FastAPI
-from fastapi.responses         import JSONResponse
-from fastapi.requests          import Request
-from loguru                    import logger
 from starlette.middleware.cors import CORSMiddleware
 
 
-from src.config          import app_configs, settings
-from src.tracking.router import router as tracking_router
+from src.config             import app_configs, settings
+from src.tracking.router    import router as tracking_router
+from src.middleware.logging import LoggingMiddleware
 
 app = FastAPI(**app_configs)
 
-
+app.add_middleware(LoggingMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins      = settings.CORS_ORIGINS,
@@ -23,19 +21,6 @@ app.add_middleware(
 @app.get('/healthcheck', include_in_schema=False)
 async def healthcheck() -> dict[str, str]:
     return {'status': 'ok'}
-
-
-@app.middleware('http')
-async def log_exceptions(request: Request, call_next):
-    try:
-        response = await call_next(request)
-    except Exception as e:
-        logger.error(f'Exception occurred: {e}')
-        return JSONResponse(
-            status_code=500,
-            content={'message': 'Internal Server Error'},
-        )
-    return response
 
 
 app.include_router(tracking_router, prefix='/tracking', tags=['Tracking'])
