@@ -27,6 +27,7 @@ t_action = Table(
 	settings.ACTION_TABLE,
 	metadata,
 	Column('id',           Integer, primary_key=True, index=True),
+	Column('code',         String),
 	Column('name',         String),
 	Column('description',  String),
 	Column('created',      DateTime(timezone=True), default=func.now(), nullable=False),
